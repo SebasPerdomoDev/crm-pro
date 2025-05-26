@@ -28,9 +28,10 @@ const Contacts = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editData, setEditData] = useState({});
   const [newClient, setNewClient] = useState({
-    name: "",
+    primerNombre: "",
+    segundoNombre: "",
+    apellido: "",
     age: "",
     phone: "",
     email: "",
@@ -58,6 +59,26 @@ const Contacts = () => {
     handleMenuClose();
   };
 
+  const handleCreateChange = (e) => {
+    setNewClient({ ...newClient, [e.target.name]: e.target.value });
+  };
+
+  const handleCreateClient = () => {
+    // Aquí deberías agregar el cliente a tu backend o estado global
+    setCreateDialogOpen(false);
+    setNewClient({
+      primerNombre: "",
+      segundoNombre: "",
+      apellido: "",
+      age: "",
+      phone: "",
+      email: "",
+      address: "",
+      city: "",
+    });
+  };
+
+  const [editData, setEditData] = useState({});
   const handleEditChange = (e) => {
     setEditData({ ...editData, [e.target.name]: e.target.value });
   };
@@ -72,29 +93,24 @@ const Contacts = () => {
     setDeleteDialogOpen(false);
   };
 
-  const handleCreateChange = (e) => {
-    setNewClient({ ...newClient, [e.target.name]: e.target.value });
-  };
-
-  const handleCreateClient = () => {
-    // Aquí deberías agregar el cliente a tu backend o estado global
-    setCreateDialogOpen(false);
-    setNewClient({
-      name: "",
-      age: "",
-      phone: "",
-      email: "",
-      address: "",
-      city: "",
-    });
-  };
-
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
     { field: "registrarId", headerName: "C.C" },
     {
-      field: "name",
-      headerName: "Nombre",
+      field: "primerNombre",
+      headerName: "Primer Nombre",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "segundoNombre",
+      headerName: "Segundo Nombre",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "apellido",
+      headerName: "Apellido",
       flex: 1,
       cellClassName: "name-column--cell",
     },
@@ -273,9 +289,43 @@ const Contacts = () => {
           <DialogContent>
             <TextField
               margin="dense"
-              label="Nombre"
-              name="name"
-              value={editData.name || ""}
+              label="Primer Nombre"
+              name="primerNombre"
+              value={editData.primerNombre || ""}
+              onChange={handleEditChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Segundo Nombre"
+              name="segundoNombre"
+              value={editData.segundoNombre || ""}
+              onChange={handleEditChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Apellido"
+              name="apellido"
+              value={editData.apellido || ""}
               onChange={handleEditChange}
               fullWidth
               InputLabelProps={{ style: { color: colors.grey[300] } }}
@@ -468,9 +518,43 @@ const Contacts = () => {
           <DialogContent>
             <TextField
               margin="dense"
-              label="Nombre"
-              name="name"
-              value={newClient.name}
+              label="Primer Nombre"
+              name="primerNombre"
+              value={newClient.primerNombre}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Segundo Nombre"
+              name="segundoNombre"
+              value={newClient.segundoNombre}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Apellido"
+              name="apellido"
+              value={newClient.apellido}
               onChange={handleCreateChange}
               fullWidth
               InputLabelProps={{ style: { color: colors.grey[300] } }}

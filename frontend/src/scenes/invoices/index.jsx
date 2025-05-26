@@ -27,7 +27,14 @@ const Invoices = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editData, setEditData] = useState({});
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    phone: "",
+    cost: "",
+    date: "",
+  });
 
   const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
@@ -61,6 +68,21 @@ const Invoices = () => {
   const handleDeleteConfirm = () => {
     // Aquí deberías eliminar el producto en tu backend o estado global
     setDeleteDialogOpen(false);
+  };
+
+  const handleCreateChange = (e) => {
+    setNewProduct({ ...newProduct, [e.target.name]: e.target.value });
+  };
+
+  const handleCreateProduct = () => {
+    // Aquí deberías agregar el producto a tu backend o estado global
+    setCreateDialogOpen(false);
+    setNewProduct({
+      name: "",
+      phone: "",
+      cost: "",
+      date: "",
+    });
   };
 
   const columns = [
@@ -138,7 +160,7 @@ const Invoices = () => {
               backgroundColor: colors.greenAccent[700],
             },
           }}
-          onClick={() => alert("Agregar producto")}
+          onClick={() => setCreateDialogOpen(true)}
         >
           Agregar producto
         </Button>
@@ -371,6 +393,119 @@ const Invoices = () => {
               variant="contained"
             >
               Eliminar
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Diálogo de creación de producto */}
+        <Dialog
+          open={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+          PaperProps={{
+            sx: {
+              backgroundColor: colors.primary[500],
+              color: colors.grey[100],
+              borderRadius: 3,
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: colors.greenAccent[400] }}>
+            Agregar Producto
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              margin="dense"
+              label="Producto"
+              name="name"
+              value={newProduct.name}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Stocks"
+              name="phone"
+              value={newProduct.phone}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Valor"
+              name="cost"
+              value={newProduct.cost}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Descripción"
+              name="date"
+              value={newProduct.date}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setCreateDialogOpen(false)}
+              sx={{
+                color: colors.grey[100],
+                backgroundColor: colors.redAccent[600],
+                "&:hover": {
+                  backgroundColor: colors.redAccent[700],
+                },
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCreateProduct}
+              variant="contained"
+              sx={{
+                backgroundColor: colors.greenAccent[600],
+                color: colors.grey[900],
+                "&:hover": {
+                  backgroundColor: colors.greenAccent[700],
+                },
+              }}
+            >
+              Crear
             </Button>
           </DialogActions>
         </Dialog>
