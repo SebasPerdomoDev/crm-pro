@@ -36,6 +36,26 @@ const Invoices = () => {
     date: "",
   });
 
+  // Leer productos de localStorage al iniciar
+  const getInitialProducts = () => {
+    const stored = localStorage.getItem("productsData");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
+
+  const [rows, setRows] = useState(getInitialProducts);
+
+  // Guardar productos en localStorage cada vez que cambian
+  React.useEffect(() => {
+    localStorage.setItem("productsData", JSON.stringify(rows));
+  }, [rows]);
+
   const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
@@ -61,12 +81,12 @@ const Invoices = () => {
   };
 
   const handleEditSave = () => {
-    // Aquí deberías actualizar los datos en tu backend o estado global
+    setRows(rows.map((row) => (row.id === editData.id ? { ...editData } : row)));
     setEditDialogOpen(false);
   };
 
   const handleDeleteConfirm = () => {
-    // Aquí deberías eliminar el producto en tu backend o estado global
+    setRows(rows.filter((row) => row.id !== selectedRow.id));
     setDeleteDialogOpen(false);
   };
 
@@ -75,7 +95,13 @@ const Invoices = () => {
   };
 
   const handleCreateProduct = () => {
-    // Aquí deberías agregar el producto a tu backend o estado global
+    setRows([
+      ...rows,
+      {
+        ...newProduct,
+        id: rows.length ? Math.max(...rows.map((r) => r.id || 0)) + 1 : 1,
+      },
+    ]);
     setCreateDialogOpen(false);
     setNewProduct({
       name: "",
@@ -104,7 +130,7 @@ const Invoices = () => {
       flex: 1,
       renderCell: (params) => (
         <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
+          {Number(params.row.cost).toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}
         </Typography>
       ),
     },
@@ -124,7 +150,10 @@ const Invoices = () => {
       filterable: false,
       renderCell: (params) => (
         <IconButton
-          onClick={(e) => handleMenuOpen(e, params.row)}
+          onClick={(e) => {
+            e.stopPropagation(); // Evita que se dispare el evento de fila (como abrir detalles)
+            handleMenuOpen(e, params.row);
+          }}
           sx={{
             color: colors.greenAccent[300],
             backgroundColor: colors.primary[600],
@@ -197,7 +226,7 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid rows={mockDataInvoices} columns={columns} />
+        <DataGrid rows={rows} columns={columns} />
         {/* Menú de acciones */}
         <Menu
           anchorEl={anchorEl}
@@ -272,6 +301,7 @@ const Invoices = () => {
               margin="dense"
               label="Stocks"
               name="phone"
+              type="number"
               value={editData.phone || ""}
               onChange={handleEditChange}
               fullWidth
@@ -282,6 +312,7 @@ const Invoices = () => {
                   backgroundColor: colors.primary[400],
                   borderRadius: 4,
                 },
+                inputProps: { min: 0 },
               }}
               sx={{ mb: 2 }}
             />
@@ -289,6 +320,7 @@ const Invoices = () => {
               margin="dense"
               label="Valor"
               name="cost"
+              type="number"
               value={editData.cost || ""}
               onChange={handleEditChange}
               fullWidth
@@ -299,6 +331,8 @@ const Invoices = () => {
                   backgroundColor: colors.primary[400],
                   borderRadius: 4,
                 },
+                startAdornment: <span style={{ marginRight: 8 }}>COP$</span>,
+                inputProps: { min: 0, step: 100 },
               }}
               sx={{ mb: 2 }}
             />
@@ -433,6 +467,7 @@ const Invoices = () => {
               margin="dense"
               label="Stocks"
               name="phone"
+              type="number"
               value={newProduct.phone}
               onChange={handleCreateChange}
               fullWidth
@@ -443,6 +478,7 @@ const Invoices = () => {
                   backgroundColor: colors.primary[400],
                   borderRadius: 4,
                 },
+                inputProps: { min: 0 },
               }}
               sx={{ mb: 2 }}
             />
@@ -450,6 +486,7 @@ const Invoices = () => {
               margin="dense"
               label="Valor"
               name="cost"
+              type="number"
               value={newProduct.cost}
               onChange={handleCreateChange}
               fullWidth
@@ -460,6 +497,8 @@ const Invoices = () => {
                   backgroundColor: colors.primary[400],
                   borderRadius: 4,
                 },
+                startAdornment: <span style={{ marginRight: 8 }}>COP$</span>,
+                inputProps: { min: 0, step: 100 },
               }}
               sx={{ mb: 2 }}
             />

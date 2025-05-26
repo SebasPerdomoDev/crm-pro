@@ -47,6 +47,15 @@ const Sidebar = () => {
     navigate("/");
   };
 
+  // Obtener usuario logueado desde localStorage
+  const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
+  const userName = loggedUser && loggedUser.primerNombre
+    ? `${loggedUser.primerNombre}${loggedUser.segundoNombre ? ' ' + loggedUser.segundoNombre : ''}${loggedUser.apellido ? ' ' + loggedUser.apellido : ''}`.trim()
+    : (loggedUser && loggedUser.email ? loggedUser.email : "Admin");
+  const userRole = loggedUser && loggedUser.access
+    ? (loggedUser.access === "admin" ? "Administrador" : loggedUser.access === "manager" ? "Manager" : "Empleado")
+    : "Administrador";
+
   return (
     <Box
       sx={{
@@ -122,10 +131,10 @@ const Sidebar = () => {
                     fontWeight="bold"
                     sx={{ m: "10px 0 0 0" }}
                   >
-                    Juan Perdomo
+                    {userName}
                   </Typography>
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                    CEO
+                    {userRole}
                   </Typography>
                 </Box>
               </Box>

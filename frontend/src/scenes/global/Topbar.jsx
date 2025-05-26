@@ -1,5 +1,5 @@
 import { Box, IconButton, useTheme } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ColorModeContext, tokens } from "../../theme";
 import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -41,6 +41,26 @@ const Topbar = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
 
+  // Estado para el diálogo de detalles del usuario
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+
+  // Sincronizar datos del usuario logueado
+  useEffect(() => {
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
+    if (loggedUser) {
+      setUserData({
+        nombre: `${loggedUser.primerNombre || ""}${loggedUser.segundoNombre ? " " + loggedUser.segundoNombre : ""}${loggedUser.apellido ? " " + loggedUser.apellido : ""}`.trim(),
+        email: loggedUser.email || "",
+        password: loggedUser.password || "",
+        telefono: loggedUser.phone || "",
+        rol: loggedUser.access === "admin" ? "Admin" : loggedUser.access === "manager" ? "manager" : "empleado",
+        primerNombre: loggedUser.primerNombre || "",
+        segundoNombre: loggedUser.segundoNombre || "",
+        apellido: loggedUser.apellido || "",
+      });
+    }
+  }, []);
+
   const handleEditChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
@@ -49,12 +69,64 @@ const Topbar = () => {
     setUserData({ ...userData, rol: e.target.value });
   };
 
+  // Al guardar, actualizar también el usuario en localStorage y en teamUsers
   const handleEditSave = () => {
-    // Aquí deberías validar la contraseña actual antes de guardar cambios
-    // Por ejemplo, comparar currentPassword con la contraseña real del usuario
-    // Si es válida, guardar cambios; si no, mostrar error.
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
+    if (!loggedUser) return;
+    // Obtener datos completos del usuario actual en teamUsers
+    const users = JSON.parse(localStorage.getItem("teamUsers") || "[]");
+    const idx = users.findIndex(u => u.email === loggedUser.email);
+    // Si el usuario no tiene id o cedula, los forzamos
+    let id = loggedUser.id;
+    let cedula = loggedUser.cedula;
+    if (idx !== -1) {
+      id = users[idx].id || 1;
+      cedula = users[idx].cedula || "1003828536";
+    } else {
+      // Si no existe, forzar valores por defecto
+      id = 1;
+      cedula = "1003828536";
+    }
+    // Actualizar loggedUser
+    const updatedUser = {
+      ...loggedUser,
+      id,
+      cedula,
+      primerNombre: userData.primerNombre || userData.nombre.split(" ")[0] || "",
+      segundoNombre: userData.segundoNombre || (userData.nombre.split(" ").length > 2 ? userData.nombre.split(" ")[1] : ""),
+      apellido: userData.apellido || userData.nombre.split(" ").slice(-1)[0] || "",
+      age: userData.age || loggedUser.age || "22",
+      email: userData.email,
+      phone: userData.telefono || "3134800728",
+      password: userData.password,
+      access: userData.rol === "Admin" ? "admin" : userData.rol,
+    };
+    localStorage.setItem("loggedUser", JSON.stringify(updatedUser));
+    // Actualizar en teamUsers
+    if (idx !== -1) {
+      users[idx] = { ...users[idx], ...updatedUser };
+      localStorage.setItem("teamUsers", JSON.stringify(users));
+    } else {
+      // Si no existe, lo agregamos
+      users.push(updatedUser);
+      localStorage.setItem("teamUsers", JSON.stringify(users));
+    }
     setEditDialogOpen(false);
     setCurrentPassword("");
+  };
+
+  // Obtener datos completos del usuario logueado desde teamUsers (incluyendo id y cedula)
+  const getLoggedUserFullData = () => {
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
+    const users = JSON.parse(localStorage.getItem("teamUsers") || "[]");
+    if (!loggedUser) return null;
+    // Buscar por email (único)
+    return users.find(u => u.email === loggedUser.email) || loggedUser;
+  };
+
+  // Mostrar modal de detalles del usuario (como en Team)
+  const handleShowUserDetails = () => {
+    setViewDialogOpen(true);
   };
 
   return (
@@ -68,7 +140,7 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton onClick={() => setEditDialogOpen(true)}>
+        <IconButton onClick={handleShowUserDetails}>
           <PersonOutlinedIcon />
         </IconButton>
       </Box>
@@ -97,9 +169,37 @@ const Topbar = () => {
               borderRadius: 2,
               px: 1,
             }}
-            placeholder="Nombre"
-            name="nombre"
-            value={userData.nombre}
+            placeholder="Primer Nombre"
+            name="primerNombre"
+            value={userData.primerNombre || ""}
+            onChange={handleEditChange}
+          />
+          <InputBase
+            fullWidth
+            sx={{
+              mb: 2,
+              backgroundColor: colors.primary[400],
+              color: colors.grey[100],
+              borderRadius: 2,
+              px: 1,
+            }}
+            placeholder="Segundo Nombre"
+            name="segundoNombre"
+            value={userData.segundoNombre || ""}
+            onChange={handleEditChange}
+          />
+          <InputBase
+            fullWidth
+            sx={{
+              mb: 2,
+              backgroundColor: colors.primary[400],
+              color: colors.grey[100],
+              borderRadius: 2,
+              px: 1,
+            }}
+            placeholder="Apellido"
+            name="apellido"
+            value={userData.apellido || ""}
             onChange={handleEditChange}
           />
           <InputBase
@@ -235,6 +335,64 @@ const Topbar = () => {
             disabled={!currentPassword}
           >
             Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Modal de detalles del usuario logueado (como en Team) */}
+      <Dialog
+        open={viewDialogOpen}
+        onClose={() => setViewDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            backgroundColor: colors.primary[500],
+            color: colors.grey[100],
+            borderRadius: 3,
+            minWidth: 350,
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: colors.greenAccent[400] }}>Información del Usuario</DialogTitle>
+        <DialogContent>
+          {(() => {
+            const user = getLoggedUserFullData();
+            if (!user) return <div>No hay datos de usuario.</div>;
+            return <>
+              <Box mb={1}><b>ID:</b> {user.id || ""}</Box>
+              <Box mb={1}><b>C.C:</b> {user.cedula || ""}</Box>
+              <Box mb={1}><b>Primer Nombre:</b> {user.primerNombre || ""}</Box>
+              <Box mb={1}><b>Segundo Nombre:</b> {user.segundoNombre || ""}</Box>
+              <Box mb={1}><b>Apellido:</b> {user.apellido || ""}</Box>
+              <Box mb={1}><b>Edad:</b> {user.age || ""}</Box>
+              <Box mb={1}><b>Teléfono:</b> {user.phone || ""}</Box>
+              <Box mb={1}><b>Email:</b> {user.email || ""}</Box>
+              <Box mb={1}><b>Rol:</b> {user.access === "admin" ? "admin" : user.access === "manager" ? "manager" : "empleado"}</Box>
+            </>;
+          })()}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setViewDialogOpen(false)}
+            sx={{
+              color: colors.grey[100],
+              backgroundColor: colors.blueAccent[600],
+              '&:hover': { backgroundColor: colors.blueAccent[700] },
+            }}
+          >
+            Cerrar
+          </Button>
+          <Button
+            onClick={() => {
+              setEditDialogOpen(true);
+              setViewDialogOpen(false);
+            }}
+            variant="contained"
+            sx={{
+              backgroundColor: colors.greenAccent[600],
+              color: colors.grey[900],
+              '&:hover': { backgroundColor: colors.greenAccent[700] },
+            }}
+          >
+            Editar
           </Button>
         </DialogActions>
       </Dialog>

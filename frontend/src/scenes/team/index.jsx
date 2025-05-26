@@ -20,7 +20,9 @@ import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettin
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Team = () => {
   const theme = useTheme();
@@ -38,7 +40,56 @@ const Team = () => {
     phone: "",
     email: "",
     access: "user",
+    password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [viewData, setViewData] = useState({});
+
+  // Leer usuarios de localStorage al iniciar
+  const getInitialRows = () => {
+    const stored = localStorage.getItem("teamUsers");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [
+          {
+            id: 1,
+            primerNombre: "Juan",
+            segundoNombre: "",
+            apellido: "Perdomo",
+            age: "",
+            phone: "3134800728",
+            email: "admin@gmail.com",
+            access: "admin",
+          },
+        ];
+      }
+    }
+    return [
+      {
+        id: 1,
+        primerNombre: "Juan",
+        segundoNombre: "",
+        apellido: "Perdomo",
+        age: "",
+        phone: "3134800728",
+        email: "admin@gmail.com",
+        access: "admin",
+      },
+    ];
+  };
+
+  const [rows, setRows] = useState(getInitialRows);
+
+  // Guardar usuarios en localStorage cada vez que cambian
+  useEffect(() => {
+    localStorage.setItem("teamUsers", JSON.stringify(rows));
+  }, [rows]);
+
+  const [editData, setEditData] = useState({});
 
   const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
@@ -65,7 +116,13 @@ const Team = () => {
   };
 
   const handleCreateUser = () => {
-    // Aquí deberías agregar el usuario a tu backend o estado global
+    setRows([
+      ...rows,
+      {
+        ...newUser,
+        id: rows.length ? Math.max(...rows.map(r => r.id)) + 1 : 1,
+      },
+    ]);
     setCreateDialogOpen(false);
     setNewUser({
       primerNombre: "",
@@ -75,27 +132,33 @@ const Team = () => {
       phone: "",
       email: "",
       access: "user",
+      password: "",
     });
   };
 
-  const [editData, setEditData] = useState({});
   const handleEditChange = (e) => {
     setEditData({ ...editData, [e.target.name]: e.target.value });
   };
 
   const handleEditSave = () => {
-    // Aquí deberías actualizar los datos en tu backend o estado global
+    setRows(rows.map(row => (row.id === editData.id ? { ...editData } : row)));
     setEditDialogOpen(false);
   };
 
   const handleDeleteConfirm = () => {
-    // Aquí deberías eliminar el usuario en tu backend o estado global
+    setRows(rows.filter(row => row.id !== selectedRow.id));
     setDeleteDialogOpen(false);
   };
 
   // Cambia las columnas para mostrar primer nombre, segundo nombre y apellido
   const columns = [
     { field: "id", headerName: "ID" },
+    {
+      field: "cedula",
+      headerName: "C.C",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
     {
       field: "primerNombre",
       headerName: "Primer Nombre",
@@ -170,7 +233,10 @@ const Team = () => {
       filterable: false,
       renderCell: (params) => (
         <IconButton
-          onClick={(e) => handleMenuOpen(e, params.row)}
+          onClick={(e) => {
+            e.stopPropagation(); // Evita que se abra el modal de detalles
+            handleMenuOpen(e, params.row);
+          }}
           sx={{
             color: colors.greenAccent[300],
             backgroundColor: colors.primary[600],
@@ -242,7 +308,14 @@ const Team = () => {
           },
         }}
       >
-        <DataGrid rows={mockDataTeam} columns={columns} />
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          onRowClick={(params) => {
+            setViewData(params.row);
+            setViewDialogOpen(true);
+          }}
+        />
         {/* Menú de acciones */}
         <Menu
           anchorEl={anchorEl}
@@ -296,6 +369,23 @@ const Team = () => {
             Editar Usuario
           </DialogTitle>
           <DialogContent>
+            <TextField
+              margin="dense"
+              label="C.C"
+              name="cedula"
+              value={editData.cedula || ""}
+              onChange={handleEditChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
             <TextField
               margin="dense"
               label="Primer Nombre"
@@ -398,6 +488,58 @@ const Team = () => {
               }}
               sx={{ mb: 2 }}
             />
+            <TextField
+              margin="dense"
+              label="Rol"
+              name="access"
+              value={editData.access || ""}
+              onChange={handleEditChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+              select
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="user">Empleado</option>
+            </TextField>
+            <TextField
+              margin="dense"
+              label="Contraseña"
+              name="password"
+              type={showEditPassword ? "text" : "password"}
+              value={editData.password || ""}
+              onChange={handleEditChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+                endAdornment: (
+                  <IconButton
+                    onClick={() => setShowEditPassword((show) => !show)}
+                    edge="end"
+                    sx={{ color: colors.grey[300] }}
+                  >
+                    {showEditPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }}
+              sx={{ mb: 2 }}
+            />
           </DialogContent>
           <DialogActions>
             <Button
@@ -491,6 +633,23 @@ const Team = () => {
             Crear Usuario
           </DialogTitle>
           <DialogContent>
+            <TextField
+              margin="dense"
+              label="C.C"
+              name="cedula"
+              value={newUser.cedula || ""}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
             <TextField
               margin="dense"
               label="Primer Nombre"
@@ -618,6 +777,33 @@ const Team = () => {
               <option value="manager">Manager</option>
               <option value="user">Empleado</option>
             </TextField>
+            <TextField
+              margin="dense"
+              label="Contraseña"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={newUser.password}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+                endAdornment: (
+                  <IconButton
+                    onClick={() => setShowPassword((show) => !show)}
+                    edge="end"
+                    sx={{ color: colors.grey[300] }}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }}
+              sx={{ mb: 2 }}
+            />
           </DialogContent>
           <DialogActions>
             <Button
@@ -644,6 +830,43 @@ const Team = () => {
               }}
             >
               Crear
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Modal para ver información completa del usuario */}
+        <Dialog
+          open={viewDialogOpen}
+          onClose={() => setViewDialogOpen(false)}
+          PaperProps={{
+            sx: {
+              backgroundColor: colors.primary[500],
+              color: colors.grey[100],
+              borderRadius: 3,
+              minWidth: 350,
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: colors.greenAccent[400] }}>Información del Usuario</DialogTitle>
+          <DialogContent>
+            <Typography><b>C.C:</b> {viewData.cedula || viewData.registrarId || ""}</Typography>
+            <Typography><b>Primer Nombre:</b> {viewData.primerNombre}</Typography>
+            <Typography><b>Segundo Nombre:</b> {viewData.segundoNombre}</Typography>
+            <Typography><b>Apellido:</b> {viewData.apellido}</Typography>
+            <Typography><b>Edad:</b> {viewData.age}</Typography>
+            <Typography><b>Teléfono:</b> {viewData.phone}</Typography>
+            <Typography><b>Email:</b> {viewData.email}</Typography>
+            <Typography><b>Rol:</b> {viewData.access}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setViewDialogOpen(false)}
+              sx={{
+                color: colors.grey[100],
+                backgroundColor: colors.blueAccent[600],
+                '&:hover': { backgroundColor: colors.blueAccent[700] },
+              }}
+            >
+              Cerrar
             </Button>
           </DialogActions>
         </Dialog>

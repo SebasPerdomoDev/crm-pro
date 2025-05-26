@@ -1,4 +1,5 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import React from "react";
+import { Box, Button, IconButton, Typography, useTheme, Snackbar, Alert } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
@@ -17,13 +18,43 @@ const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  // Mostrar notificación si viene de login exitoso
+  const [showWelcome, setShowWelcome] = React.useState(
+    localStorage.getItem("loggedIn") === "true"
+  );
+
+  React.useEffect(() => {
+    if (showWelcome) {
+      setTimeout(() => {
+        setShowWelcome(false);
+        localStorage.removeItem("loggedIn");
+      }, 2000);
+    }
+  }, [showWelcome]);
+
+  // Obtener cantidad de eventos calendario y clientes
+  const calendarEvents = JSON.parse(localStorage.getItem("calendarEvents") || "[]");
+  const contacts = JSON.parse(localStorage.getItem("contactsData") || "[]");
+  const calendarCount = calendarEvents.length;
+  const clientsCount = contacts.length;
+
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="INCIHUILA" />
-        {/* Botón de descarga eliminado */}
       </Box>
+      {/* Notificación de ingreso */}
+      <Snackbar
+        open={showWelcome}
+        autoHideDuration={2000}
+        onClose={() => setShowWelcome(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Ingresaste correctamente
+        </Alert>
+      </Snackbar>
       {/* GRID & CHARTS */}
       <Box
         display="grid"
@@ -40,7 +71,7 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
+            title={calendarCount}
             subtitle="Eventos Calendario"
             progress="0.75"
             increase="+14%"
@@ -78,7 +109,7 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
+            title={clientsCount}
             subtitle="Clientes"
             progress="0.30"
             increase="+5%"

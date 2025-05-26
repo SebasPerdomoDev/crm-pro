@@ -29,6 +29,7 @@ const Contacts = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newClient, setNewClient] = useState({
+    registrarId: "",
     primerNombre: "",
     segundoNombre: "",
     apellido: "",
@@ -38,6 +39,26 @@ const Contacts = () => {
     address: "",
     city: "",
   });
+
+  // Leer clientes de localStorage al iniciar
+  const getInitialClients = () => {
+    const stored = localStorage.getItem("contactsData");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
+
+  const [rows, setRows] = useState(getInitialClients);
+
+  // Guardar clientes en localStorage cada vez que cambian
+  React.useEffect(() => {
+    localStorage.setItem("contactsData", JSON.stringify(rows));
+  }, [rows]);
 
   const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
@@ -64,9 +85,16 @@ const Contacts = () => {
   };
 
   const handleCreateClient = () => {
-    // Aquí deberías agregar el cliente a tu backend o estado global
+    setRows([
+      ...rows,
+      {
+        ...newClient,
+        id: rows.length ? Math.max(...rows.map((r) => r.id || 0)) + 1 : 1,
+      },
+    ]);
     setCreateDialogOpen(false);
     setNewClient({
+      registrarId: "",
       primerNombre: "",
       segundoNombre: "",
       apellido: "",
@@ -84,14 +112,17 @@ const Contacts = () => {
   };
 
   const handleEditSave = () => {
-    // Aquí deberías actualizar los datos en tu backend o estado global
+    setRows(rows.map((row) => (row.id === editData.id ? { ...editData } : row)));
     setEditDialogOpen(false);
   };
 
   const handleDeleteConfirm = () => {
-    // Aquí deberías eliminar el usuario en tu backend o estado global
+    setRows(rows.filter((row) => row.id !== selectedRow.id));
     setDeleteDialogOpen(false);
   };
+
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [viewData, setViewData] = useState({});
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -149,7 +180,10 @@ const Contacts = () => {
       filterable: false,
       renderCell: (params) => (
         <IconButton
-          onClick={(e) => handleMenuOpen(e, params.row)}
+          onClick={(e) => {
+            e.stopPropagation(); // Evita que se abra el modal de detalles
+            handleMenuOpen(e, params.row);
+          }}
           sx={{
             color: colors.greenAccent[300],
             backgroundColor: colors.primary[600],
@@ -230,9 +264,13 @@ const Contacts = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={rows}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
+          onRowClick={(params) => {
+            setViewData(params.row);
+            setViewDialogOpen(true);
+          }}
         />
         {/* Menú de acciones */}
         <Menu
@@ -287,6 +325,23 @@ const Contacts = () => {
             Editar Cliente
           </DialogTitle>
           <DialogContent>
+            <TextField
+              margin="dense"
+              label="C.C"
+              name="registrarId"
+              value={editData.registrarId || ""}
+              onChange={handleEditChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
             <TextField
               margin="dense"
               label="Primer Nombre"
@@ -518,6 +573,23 @@ const Contacts = () => {
           <DialogContent>
             <TextField
               margin="dense"
+              label="C.C"
+              name="registrarId"
+              value={newClient.registrarId}
+              onChange={handleCreateChange}
+              fullWidth
+              InputLabelProps={{ style: { color: colors.grey[300] } }}
+              InputProps={{
+                style: {
+                  color: colors.grey[100],
+                  backgroundColor: colors.primary[400],
+                  borderRadius: 4,
+                },
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
               label="Primer Nombre"
               name="primerNombre"
               value={newClient.primerNombre}
@@ -678,6 +750,44 @@ const Contacts = () => {
               }}
             >
               Crear
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Modal para ver información completa del cliente */}
+        <Dialog
+          open={viewDialogOpen}
+          onClose={() => setViewDialogOpen(false)}
+          PaperProps={{
+            sx: {
+              backgroundColor: colors.primary[500],
+              color: colors.grey[100],
+              borderRadius: 3,
+              minWidth: 350,
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: colors.greenAccent[400] }}>Información del Cliente</DialogTitle>
+          <DialogContent>
+            <Typography><b>C.C:</b> {viewData.registrarId}</Typography>
+            <Typography><b>Primer Nombre:</b> {viewData.primerNombre}</Typography>
+            <Typography><b>Segundo Nombre:</b> {viewData.segundoNombre}</Typography>
+            <Typography><b>Apellido:</b> {viewData.apellido}</Typography>
+            <Typography><b>Edad:</b> {viewData.age}</Typography>
+            <Typography><b>Teléfono:</b> {viewData.phone}</Typography>
+            <Typography><b>Email:</b> {viewData.email}</Typography>
+            <Typography><b>Dirección:</b> {viewData.address}</Typography>
+            <Typography><b>Ciudad:</b> {viewData.city}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setViewDialogOpen(false)}
+              sx={{
+                color: colors.grey[100],
+                backgroundColor: colors.blueAccent[600],
+                '&:hover': { backgroundColor: colors.blueAccent[700] },
+              }}
+            >
+              Cerrar
             </Button>
           </DialogActions>
         </Dialog>
