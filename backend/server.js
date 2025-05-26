@@ -19,27 +19,18 @@ const multer = require("multer");
 /*
 RUTAS 
 */
-const authRoutes = require("./routes/authRoutes");
+const rolesRoutes = require("./routes/rolsRoutes");
 const usersRoutes = require("./routes/userRoutes");
-const studentsRoutes = require("./routes/studentsRoutes");
-const teachersRoutes = require("./routes/teachersRoutes");
-const finanzasRoutes = require("./routes/finanzasRoutes");
-const notasRoutes = require("./routes/notasRoutes");
-const indicadoresRoutes = require("./routes/indicadoresRoutes")
-const boletinRoutes = require("./routes/boletinRoutes");
-const salonesRoutes = require("./routes/salonesRoutes");
-const asignaturasRoutes = require("./routes/asignaturasRoutes");
 const agendasRoutes = require("./routes/agendasRoutes");
-const validateRoutes = require("./routes/validateRoutes");
 
 const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(logger("dev")); // PARA QUE MUESTRE LOS MENSAJES DE LAS PETICIONES QUE SE
-app.use(bodyParser.json({ limit: "50mb" })); // PARA QUE PUEDA INTERPRETAR LOS DATOS QUE VIENEN DE UN FORMULARIO
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(bodyParser.json({ extended: true })); // PARA QUE PUEDA INTERPRETAR LOS DATOS QUE VIENEN DE UN FORMULARIO
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" })); // PARA QUE PUEDA INTERPRETAR LOS DATOS QUE VIENEN DE UN FORMULARIO
-app.use(express.urlencoded({ limit: "50mb", extended: true })); // PARA QUE PUEDA INTERPRETAR LOS DATOS QUE VIENEN DE UN FORMULARIO
+app.use(express.urlencoded({ extended: true })); // PARA QUE PUEDA INTERPRETAR LOS DATOS QUE VIENEN DE UN FORMULARIO
 
 
 // Configuración de CORS
@@ -87,21 +78,12 @@ const upload = multer({
 /*
 LLAMADO RUTAS 
 */
-authRoutes(app);
+rolesRoutes(app);
 usersRoutes(app, upload);
-studentsRoutes(app);
-teachersRoutes(app);
-finanzasRoutes(app);
-notasRoutes(app);
-indicadoresRoutes(app);
-boletinRoutes(app);
-salonesRoutes(app, upload);
-asignaturasRoutes(app);
 agendasRoutes(app, upload);
-validateRoutes(app);
 
 //Configurar la IP en CMD ipconfig para correr el server en la red local
-server.listen(port, "192.168.20.7" || "localhost", function () {
+server.listen(port, "192.168.20.24" || "localhost", function () {
   console.log("Aplicacion de NodeJS " + port + " Iniciada...");
 });
 

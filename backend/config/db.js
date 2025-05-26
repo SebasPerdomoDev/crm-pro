@@ -5,7 +5,7 @@ const db = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "1234",
-  database: "travesuras_db",
+  database: "crm_incihuila",
   waitForConnections: true,
   connectionLimit: 10, // Límite de conexiones en el pool
   queueLimit: 0, // Sin límite de cola
