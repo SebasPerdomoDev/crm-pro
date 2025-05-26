@@ -96,9 +96,7 @@ const Sidebar = () => {
                   alignItems="center"
                   ml="15px"
                 >
-                  <Typography variant="h3" color={colors.grey[100]}>
-                    INCIHUIla
-                  </Typography>
+                 
                   <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                     <MenuOutlinedIcon />
                   </IconButton>
@@ -220,10 +218,13 @@ const Sidebar = () => {
         {/* Botón Cerrar Sesión atractivo */}
         <Box
           sx={{
-            padding: "12px 20px",
+            padding: { xs: "8px 8px", md: "12px 20px" },
             borderTop: `1px solid ${colors.grey[700]}`,
             display: "flex",
             justifyContent: "center",
+            position: { xs: "static", md: "static" },
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
           <Box
@@ -236,23 +237,29 @@ const Sidebar = () => {
               background:
                 "linear-gradient(90deg, #4cceac 0%, #6870fa 100%)",
               color: "white",
-              px: 3,
-              py: 1.5,
+              px: isCollapsed ? 1.5 : { xs: 2, md: 3 },
+              py: isCollapsed ? 1 : { xs: 1, md: 1.5 },
               borderRadius: "30px",
               fontWeight: "bold",
-              boxShadow:
-                "0px 4px 15px rgba(5, 5, 5, 0.6)",
-              transition: "background 0.3s ease",
+              boxShadow: "0px 4px 15px rgba(5, 5, 5, 0.6)",
+              transition: "background 0.3s ease, width 0.2s",
               "&:hover": {
                 background:
                   "linear-gradient(90deg, #6870fa 0%, #4cceac 100%)",
               },
               userSelect: "none",
-              fontSize: "1rem",
+              fontSize: { xs: "0.95rem", md: "1rem" },
+              width: isCollapsed ? "auto" : { xs: "100%", md: "auto" },
+              justifyContent: "center",
+              minWidth: isCollapsed ? "unset" : 0,
             }}
           >
-            <LogoutIcon />
-            Cerrar Sesión
+            <LogoutIcon sx={{ fontSize: { xs: 22, md: 24 } }} />
+            {!isCollapsed && (
+              <span style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+                Cerrar Sesión
+              </span>
+            )}
           </Box>
         </Box>
       </ProSidebar>
