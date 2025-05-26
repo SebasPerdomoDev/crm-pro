@@ -46,7 +46,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true })); // PARA QUE PUED
 const corsOptions = {
   origin: [
     "http://localhost:3000",  // Permite peticiones desde el dominio del frontend en producción
-    "http://192.168.0.101:3000"
+    "http://192.168.20.7:3000"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],

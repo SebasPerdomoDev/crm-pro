@@ -1,0 +1,104 @@
+/* Contenedor centrado con fondo degradado */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(90deg, #1F2A40, #141b2d);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+/* Tarjeta blanca con sombra y bordes redondeados */
+.login-card {
+  background: white;
+  padding: 2rem 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Título */
+.login-title {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+/* Labels */
+.login-label {
+  display: block;
+  text-align: left;
+  margin: 0.5rem 0 0.3rem 0;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Inputs */
+.login-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px #3b82f6;
+}
+
+/* Link de olvido de contraseña */
+.forgot-password {
+  display: block;
+  text-align: right;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #1e40af;
+}
+
+/* Botón */
+.login-button {
+  width: 100%;
+  padding: 0.75rem 0;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 0.75rem;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #1e40af;
+}
+
+/* Texto de registro */
+.signup-text {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.signup-text a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
