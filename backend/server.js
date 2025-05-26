@@ -101,7 +101,7 @@ agendasRoutes(app, upload);
 validateRoutes(app);
 
 //Configurar la IP en CMD ipconfig para correr el server en la red local
-server.listen(port, "192.168.0.101" || "localhost", function () {
+server.listen(port, "192.168.20.7" || "localhost", function () {
   console.log("Aplicacion de NodeJS " + port + " Iniciada...");
 });
 
