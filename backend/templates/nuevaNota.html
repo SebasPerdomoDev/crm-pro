@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación de Notas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ECECEC;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 50px;
+            background-image: url('https://res.cloudinary.com/dafebdran/image/upload/v1738716762/logo/genjg69vdhrgjwguji0m.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 35%;
+        }
+
+        .header {
+            background: #11308C;
+            color: white;
+            font-size: 22px;
+            /* Mantener tamaño consistente */
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            /* Ocupar todo el ancho */
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        /* Marca de agua con opacidad */
+        .background-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            opacity: 0.2;
+        }
+
+        .content {
+            padding: 20px;
+            color: #333;
+            text-align: left;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .cta a {
+            text-decoration: none;
+            padding: 10px 20px;
+            color: white;
+            background-color: #11308C;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+
+
+        }
+
+        .cta a:hover {
+            background-color: #1c3bb9;
+            /* Color más oscuro o el que prefieras */
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: gray;
+        }
+
+        .highlight {
+            color: #11308C;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">📚 Nueva Nota Registrada</div>
+        <div class="content">
+            <p>Hola, <span class="highlight">{{nombreCompleto}}</span></p>
+            <p>Se ha registrado una nueva nota en la asignatura <strong class="highlight">{{asignatura}}</strong>.</p>
+            <p><strong>Periodo:</strong> {{periodo}}</p>
+            <p><strong>Calificación:</strong> {{calificacion}}</p>
+            <p>Revisa el sistema para más detalles.</p>
+        </div>
+
+        <div class="cta">
+            <a href="https://travesurasconamor.com">Ir a la plataforma</a>
+        </div>
+        <div class="footer">© Colegio Travesuras Con Amor - Todos los derechos reservados</div>
+    </div>
+</body>
+
+</html>

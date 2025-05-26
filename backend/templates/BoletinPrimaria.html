@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOLETÍN {{Boletingrado}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Pinyon+Script&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* @page {
+            margin: 15mm;
+        } */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f7;
+            padding: 20px;
+        }
+
+        .boletin-container {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            position: relative;
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 2px solid #11308C;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #11308C;
+            padding-bottom: 10px;
+        }
+
+        .logo {
+            height: 150px;
+            margin-right: 20px;
+        }
+
+        .header-text {
+            text-align: center;
+
+        }
+
+        .header-text h1 {
+            font-size: 22px;
+            color: #11308C;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            font-size: 12px;
+            color: #555;
+            line-height: 0.6;
+        }
+
+        .report-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #11308C;
+        }
+
+        .periodo{
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .student-name {
+            font-size: 17px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 8px;
+        }
+
+        .section-info {
+            padding-top: 65px;
+        }
+
+        .scale {
+            list-style-type: none;
+            padding: 0;
+            color: #555;
+        }
+
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            page-break-inside: avoid;
+        }
+
+        .grades-table th,
+        .grades-table td {
+            border: 1px solid #11308C;
+            padding: 8px;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .grades-table th {
+            background-color: #11308C;
+            color: white;
+        }
+
+        .observations {
+            background: #ebf1ff;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 5px solid #11308C;
+            border-radius: 5px;
+            page-break-inside: avoid;
+            text-align: justify;
+        }
+
+        .signatures {
+            text-align: center;
+            /* margin-top: 20px; */
+            font-weight: bold;
+            color: #2c3e50;
+            padding-bottom: 10px;
+        }
+
+        .signature-item {
+            display: inline-block;
+            text-align: center;
+        }
+
+        .firma-director{
+            text-align: left; 
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .firma-img {
+            display: block;
+            margin: 0 auto 5px 150px;
+            max-width: 280px;
+            height: auto;
+        }
+
+        .watermark {
+            /* margin-top: -10px; */
+            text-align: center;
+            color: #4966c0;
+            font-family: "Pinyon Script", cursive;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="boletin-container">
+        <div class="header">
+            <img src="{{logo}}" alt="Logo" class="logo">
+            <div class="header-text">
+                <h1>COLEGIO TRAVESURAS CON AMOR</h1>
+                <p>RESOLUCIÓN 1882 DEL 25 DE SEPTIEMBRE DEL 2023</p>
+                <p>CÓDIGO DANE: 341001800193</p>
+                <p>NIT: 1075247874-5</p>
+                <p>DIR. CL 72 4-93. B. TERCER MILENIO</p>
+                <p>TEL. 3115314936 - NEIVA, HUILA</p>
+                <p class="report-title">INFORME DESCRIPTIVO Y EXPLICATIVO</p>
+                <p class="periodo">{{periodo_nombre}} {{año_actual}} - GRADO {{grado}}</p>
+            </div>
+        </div>
+
+        <h2 class="student-name">NOMBRE: {{nombre_estudiante}}</h2>
+
+        <h2 class="section-title">Escala Valorativa:</h2>
+        <ul class="scale">
+            <li><strong>IH: </strong>Intensidad Horaria</li>
+            <li>4.6 - 5.0: Desempeño Superior</li>
+            <li>4.0 - 4.5: Desempeño Alto</li>
+            <li>3.0 - 3.9: Desempeño Básico</li>
+            <li>1.0 - 2.9: Desempeño Bajo</li>
+        </ul>
+
+        <h2 class="section-title">Materias y Valoraciones:</h2>
+        <table class="grades-table">
+            <tbody>
+                {{tabla_notas}}
+            </tbody>
+        </table>
+        <div class="section-info">
+            <h2 class="section-title">Puesto de grupo: {{puesto_grupo}} de {{total_estudiantes}} estudiantes</h2>
+            <h2 class="section-title">Promedio en el periodo: {{promedio_final}}</h2>
+        </div>
+
+        <div class="observations">
+            <h3>Observaciones:</h3>
+            <div style="
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                line-height: 1.4;
+            ">
+                {{observacion}}
+            </div>
+        </div>
+        
+
+        <div class="signatures">
+            <div class="firma-director">
+                <p><strong>Director de Grupo:</strong> {{director}}.</p>
+            </div>
+            <div class="signature-item">
+                <img src="{{firma_rector}}" alt="Firma rector" class="firma-img">
+                <p style="
+                    margin-top: -35px;
+                ">______________________________________</p>
+                <p style="
+                    margin-top: -5px;
+                    font-size: 13px;
+                "><strong>LIC. YENNIE DEL PILAR VARÓN MÉNDEZ.</strong></p>
+                <p style="
+                    margin-top: -12px;
+                    font-size: 13px;
+                ">REPRESENTANTE LEGAL</p>
+                <p style="
+                    margin-top: -12px;
+                    font-size: 13px;
+                ">Nit: 1075247874-5</p>
+            </div>
+        </div>
+        <footer class="watermark">“Contribuyendo a la formación integral de los niños”</footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido/a</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ECECEC;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      width: 80%;
+      max-width: 550px;
+      margin: 20px auto;
+      background: white;
+      padding: 60px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background-image: url('https://res.cloudinary.com/dafebdran/image/upload/v1738716762/logo/genjg69vdhrgjwguji0m.png');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 35%;
+    }
+    .header {
+      background: #11308C;
+      color: white;
+      font-size: 22px;
+      /* Mantener tamaño consistente */
+      font-weight: bold;
+      text-align: center;
+      padding: 15px;
+      width: 100%;
+      /* Ocupar todo el ancho */
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .content {
+      margin: 20px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    .cta {
+      text-align: center;
+      margin-top: 70px;
+    }
+
+    .cta a {
+      text-decoration: none;
+      padding: 10px 20px;
+      color: white;
+      background-color: #11308C;
+      border-radius: 5px;
+      font-weight: bold;
+      display: inline-block;
+
+
+    }
+
+    .cta a:hover {
+      background-color: #1c3bb9;
+      /* Color más oscuro o el que prefieras */
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.8em;
+      color: #888;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+      /* Elimina el margen izquierdo que se agrega por defecto */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>Bienvenido/a, {{nombreCompleto}}</h1>
+    </div>
+
+    <div class="content">
+      <p>Hola {{nombreCompleto}},</p>
+      <p>Gracias por unirte a nuestra plataforma. Aquí tienes tus credenciales para iniciar sesión:</p>
+      <ul>
+        <li><strong>Correo:</strong> {{correo}}</li>
+        <li><strong>Contraseña:</strong> {{password}}</li>
+      </ul>
+      <p>Puedes ingresar a nuestra plataforma haciendo clic en el botón a continuación:</p>
+    </div>
+
+    <div class="cta">
+      <a href="https://travesurasconamor.com">Ir a la plataforma</a>
+    </div>
+
+    <p class="footer">
+      Este es un correo automático. Por favor, no respondas a este mensaje.
+    </p>
+  </div>
+</body>
+
+</html>
