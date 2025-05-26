@@ -73,42 +73,23 @@ const Topbar = () => {
   const handleEditSave = () => {
     const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
     if (!loggedUser) return;
-    // Obtener datos completos del usuario actual en teamUsers
-    const users = JSON.parse(localStorage.getItem("teamUsers") || "[]");
-    const idx = users.findIndex(u => u.email === loggedUser.email);
-    // Si el usuario no tiene id o cedula, los forzamos
-    let id = loggedUser.id;
-    let cedula = loggedUser.cedula;
-    if (idx !== -1) {
-      id = users[idx].id || 1;
-      cedula = users[idx].cedula || "1003828536";
-    } else {
-      // Si no existe, forzar valores por defecto
-      id = 1;
-      cedula = "1003828536";
-    }
     // Actualizar loggedUser
     const updatedUser = {
       ...loggedUser,
-      id,
-      cedula,
       primerNombre: userData.primerNombre || userData.nombre.split(" ")[0] || "",
       segundoNombre: userData.segundoNombre || (userData.nombre.split(" ").length > 2 ? userData.nombre.split(" ")[1] : ""),
       apellido: userData.apellido || userData.nombre.split(" ").slice(-1)[0] || "",
-      age: userData.age || loggedUser.age || "22",
       email: userData.email,
-      phone: userData.telefono || "3134800728",
+      phone: userData.telefono,
       password: userData.password,
       access: userData.rol === "Admin" ? "admin" : userData.rol,
     };
     localStorage.setItem("loggedUser", JSON.stringify(updatedUser));
     // Actualizar en teamUsers
+    const users = JSON.parse(localStorage.getItem("teamUsers") || "[]");
+    const idx = users.findIndex(u => u.email === loggedUser.email);
     if (idx !== -1) {
       users[idx] = { ...users[idx], ...updatedUser };
-      localStorage.setItem("teamUsers", JSON.stringify(users));
-    } else {
-      // Si no existe, lo agregamos
-      users.push(updatedUser);
       localStorage.setItem("teamUsers", JSON.stringify(users));
     }
     setEditDialogOpen(false);
@@ -140,9 +121,7 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton onClick={handleShowUserDetails}>
-          <PersonOutlinedIcon />
-        </IconButton>
+        
       </Box>
       {/* Diálogo para editar usuario */}
       <Dialog

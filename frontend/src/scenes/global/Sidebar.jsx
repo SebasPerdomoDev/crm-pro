@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,7 +13,6 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -39,22 +38,28 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
-
   const navigate = useNavigate();
 
+  // Leer usuario logueado de localStorage
+  const [loggedUser, setLoggedUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("loggedUser");
+    if (storedUser) {
+      setLoggedUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const userName = loggedUser
+  ? `${loggedUser.primerNombre || ""} ${loggedUser.apellido || ""}`.trim()
+  : "Juan Perdomo";
+
+
+
   const handleLogout = () => {
-    // Aquí limpiar sesión si es necesario
+    localStorage.removeItem("loggedUser");
     navigate("/");
   };
-
-  // Obtener usuario logueado desde localStorage
-  const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
-  const userName = loggedUser && loggedUser.primerNombre
-    ? `${loggedUser.primerNombre}${loggedUser.segundoNombre ? ' ' + loggedUser.segundoNombre : ''}${loggedUser.apellido ? ' ' + loggedUser.apellido : ''}`.trim()
-    : (loggedUser && loggedUser.email ? loggedUser.email : "Admin");
-  const userRole = loggedUser && loggedUser.access
-    ? (loggedUser.access === "admin" ? "Administrador" : loggedUser.access === "manager" ? "Manager" : "Empleado")
-    : "Administrador";
 
   return (
     <Box
@@ -86,10 +91,8 @@ const Sidebar = () => {
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
-        {/* Contenedor menú */}
         <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
           <Menu iconShape="square">
-            {/* LOGO AND MENU ICON */}
             <MenuItem
               onClick={() => setIsCollapsed(!isCollapsed)}
               icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
@@ -105,7 +108,6 @@ const Sidebar = () => {
                   alignItems="center"
                   ml="15px"
                 >
-                 
                   <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                     <MenuOutlinedIcon />
                   </IconButton>
@@ -133,9 +135,7 @@ const Sidebar = () => {
                   >
                     {userName}
                   </Typography>
-                  <Typography variant="h5" color={colors.greenAccent[500]}>
-                    {userRole}
-                  </Typography>
+                  
                 </Box>
               </Box>
             )}
@@ -148,7 +148,6 @@ const Sidebar = () => {
                 selected={selected}
                 setSelected={setSelected}
               />
-
               <Typography
                 variant="h6"
                 color={colors.grey[300]}
@@ -184,7 +183,6 @@ const Sidebar = () => {
                 selected={selected}
                 setSelected={setSelected}
               />
-
               <Typography
                 variant="h6"
                 color={colors.grey[300]}
@@ -213,19 +211,17 @@ const Sidebar = () => {
                 selected={selected}
                 setSelected={setSelected}
               />
-             
             </Box>
           </Menu>
         </Box>
 
-        {/* Botón Cerrar Sesión atractivo */}
+        {/* Botón de cerrar sesión */}
         <Box
           sx={{
             padding: { xs: "8px 8px", md: "12px 20px" },
             borderTop: `1px solid ${colors.grey[700]}`,
             display: "flex",
             justifyContent: "center",
-            position: { xs: "static", md: "static" },
             width: "100%",
             boxSizing: "border-box",
           }}
@@ -237,27 +233,24 @@ const Sidebar = () => {
               display: "flex",
               alignItems: "center",
               gap: 1,
-              background:
-                "linear-gradient(90deg, #4cceac 0%, #6870fa 100%)",
+              background: "linear-gradient(90deg, #4cceac 0%, #6870fa 100%)",
               color: "white",
-              px: isCollapsed ? 1.5 : { xs: 2, md: 3 },
-              py: isCollapsed ? 1 : { xs: 1, md: 1.5 },
+              px: isCollapsed ? 1.5 : 3,
+              py: isCollapsed ? 1 : 1.5,
               borderRadius: "30px",
               fontWeight: "bold",
               boxShadow: "0px 4px 15px rgba(5, 5, 5, 0.6)",
-              transition: "background 0.3s ease, width 0.2s",
+              transition: "background 0.3s ease",
               "&:hover": {
-                background:
-                  "linear-gradient(90deg, #6870fa 0%, #4cceac 100%)",
+                background: "linear-gradient(90deg, #6870fa 0%, #4cceac 100%)",
               },
               userSelect: "none",
-              fontSize: { xs: "0.95rem", md: "1rem" },
-              width: isCollapsed ? "auto" : { xs: "100%", md: "auto" },
+              fontSize: "1rem",
+              width: isCollapsed ? "auto" : "100%",
               justifyContent: "center",
-              minWidth: isCollapsed ? "unset" : 0,
             }}
           >
-            <LogoutIcon sx={{ fontSize: { xs: 22, md: 24 } }} />
+            <LogoutIcon sx={{ fontSize: 22 }} />
             {!isCollapsed && (
               <span style={{ display: "inline-block", whiteSpace: "nowrap" }}>
                 Cerrar Sesión

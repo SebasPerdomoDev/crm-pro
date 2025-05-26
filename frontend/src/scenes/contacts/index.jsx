@@ -112,9 +112,19 @@ const Contacts = () => {
   };
 
   const handleEditSave = () => {
-    setRows(rows.map((row) => (row.id === editData.id ? { ...editData } : row)));
-    setEditDialogOpen(false);
-  };
+  const updatedRows = rows.map((row) =>
+    row.id === editData.id ? { ...editData } : row
+  );
+  setRows(updatedRows);
+  setEditDialogOpen(false);
+
+  // ACTUALIZA loggedUser SI ESTÁS EDITANDO AL USUARIO LOGUEADO
+  const currentUser = JSON.parse(localStorage.getItem("loggedUser"));
+  if (currentUser?.email === editData.email) {
+    localStorage.setItem("loggedUser", JSON.stringify(editData));
+  }
+};
+
 
   const handleDeleteConfirm = () => {
     setRows(rows.filter((row) => row.id !== selectedRow.id));
